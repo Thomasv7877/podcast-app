@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Podcast App</string>
+    <string name="page_title" />
+    <string name="updated" />
+    <string name="connection_error">connection_error</string>
+    <string name="xml_error">xml_error</string>
+    <string name="read_rss_feed">Read RSS Feed</string>
+    <string name="htmltekst">TextView</string>
+</resources>
