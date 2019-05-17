@@ -1,5 +1,8 @@
 package com.example.podcastapp;
 
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.util.Xml;
@@ -8,6 +11,9 @@ import android.webkit.WebView;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -27,12 +33,18 @@ public class SubscriptionAdder {
     private MainActivity main;
 
     public SubscriptionAdder(MainActivity mainActivity) {
+
         this.main = mainActivity;
+        this.feedUrl = null;
+        this.title = null;
+        this.description = null;
+        this.imgUrl = null;
     }
 
     public void addSub(String URL){
         this.feedUrl = URL;
         new addSubIBackground().execute(URL);
+
     }
 
     private class addSubIBackground extends AsyncTask<String, Void, String> {
@@ -45,6 +57,8 @@ public class SubscriptionAdder {
             } catch (XmlPullParserException e) {
                 //return getResources().getString(R.string.xml_error);
             }
+            getAndStoreImage();
+
             return "succes";
         }
 
@@ -57,11 +71,14 @@ public class SubscriptionAdder {
             //ListView podLijst = (ListView) findViewById(R.id.podLijst);
             //ArrayAdapter adapter = new ArrayAdapter<PodXmlParser.Entry>(this, R.layout.activity_network, entries);
             //podLijst.setAdapter(adapter);
-            System.out.println("Volledige output: " + title + " " + description + " " + imgUrl);
+            System.out.println(title + "\n" + description + "\n" + feedUrl + "\n" + imgUrl);
+            //System.out.print(this.toString());
             main.updateViewWithPodcast(new Podcast(title, description));
-            updateDbAndStorage();
+            //updateDbAndStorage();
+            showImage();
         }
     }
+
 
     public void parseXml(String urlString)throws XmlPullParserException, IOException {
         InputStream stream = null;
@@ -89,7 +106,7 @@ public class SubscriptionAdder {
         }
     }
 
-    /*public void readFeed(XmlPullParser parser) throws XmlPullParserException, IOException {
+    public void readFeed(XmlPullParser parser) throws XmlPullParserException, IOException {
         List entries = new ArrayList();
         parser.nextTag();
         parser.require(XmlPullParser.START_TAG, null, "channel");
@@ -115,7 +132,7 @@ public class SubscriptionAdder {
             }
 
         }
-    }*/
+    }
 
     public void readFeed2(XmlPullParser parser) throws XmlPullParserException, IOException {
         List entries = new ArrayList();
@@ -146,9 +163,35 @@ public class SubscriptionAdder {
             eventType = parser.next();
         }
     }
-
-    public void updateDbAndStorage(){
-
+    // podcast afbeelding downloaden en opslaan
+    public void getAndStoreImage(){
+        FileOutputStream outStream = null;
+        try {
+            InputStream inStream = (InputStream) new URL(imgUrl).getContent();
+            Bitmap d = BitmapFactory.decodeStream(inStream);
+            inStream.close();
+            String imgNaam = title + ".png";
+            File file = new File(main.getFilesDir(), imgNaam);
+            System.out.println("De app file dir is: " + main.getFilesDir().toString());
+            outStream = new FileOutputStream(file);
+            d.compress(Bitmap.CompressFormat.PNG, 100, outStream);
+            outStream.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    private void showImage(){
+        String name = title + ".png";
+        FileInputStream fileInputStream;
+        Bitmap bitmap = null;
+        try{
+            fileInputStream = main.openFileInput(name);
+            bitmap = BitmapFactory.decodeStream(fileInputStream);
+            fileInputStream.close();
+            main.setImage(bitmap);
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
     }
     private InputStream downloadUrl(String urlString) throws IOException {
         java.net.URL url = new URL(urlString);
@@ -229,9 +272,12 @@ public class SubscriptionAdder {
         return feedUrl;
     }
 
-    @NonNull
     @Override
     public String toString() {
-        return super.toString();
+        return String.format("%s: %s%n%s: %s%n%s: %s%n%s: %s%n",
+                "title", title,
+                "description", description,
+                "feed", feedUrl,
+                "image", imgUrl);
     }
 }
