@@ -73,7 +73,7 @@ public class SubscriptionAdder {
             //podLijst.setAdapter(adapter);
             System.out.println(title + "\n" + description + "\n" + feedUrl + "\n" + imgUrl);
             //System.out.print(this.toString());
-            main.updateViewWithPodcast(new Podcast(title, description));
+            main.updateViewWithPodcast(new Podcast(title, description, feedUrl));
             //updateDbAndStorage();
             showImage();
         }

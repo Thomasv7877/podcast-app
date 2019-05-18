@@ -7,6 +7,10 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.webkit.WebView;
 
+import androidx.fragment.app.FragmentActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.IOException;
@@ -15,24 +19,18 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
 public class NetworkActivity extends Activity {
 
     //private List<PodXmlParser.Entry> entries = null;
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        //setContentView(R.layout.activity_network);
-        loadPage();
-
-    }
-
     public static final String WIFI = "Wi-Fi";
     public static final String ANY = "Any";
-    private static final String URL = "https://rss.art19.com/doughboys";
+
+    //private static final String URL = temp == null? "https://rss.art19.com/doughboys" : temp;
+    private static String URL = "https://rss.art19.com/doughboys";
     //private static final String URL = "http://stackoverflow.com/feeds/tag?tagnames=android&sort=newest";
     //private static final String URL = "https://rss.art19.com/hollywood-handbook";
 
@@ -43,6 +41,22 @@ public class NetworkActivity extends Activity {
     // Whether the display should be refreshed.
     public static boolean refreshDisplay = true;
     public static String sPref = "Any";
+
+    /*private RecyclerView recyclerView;
+    private RecyclerView.Adapter mAdapter;
+    private RecyclerView.LayoutManager layoutManager;
+    private String[] epLinks, epNames;*/
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        String temp = this.getIntent().getStringExtra("feed");
+        if (temp != null) URL = temp;
+        //setContentView(R.layout.activity_network);
+        loadPage();
+
+    }
+
 
     // Uses AsyncTask to download the XML feed from stackoverflow.com.
     public void loadPage() {
@@ -70,6 +84,7 @@ public class NetworkActivity extends Activity {
 
         @Override
         protected void onPostExecute(String result) {
+            //setupRecyclerView();
             setContentView(R.layout.activity_network);
             // Displays the HTML string in the UI via a WebView
             WebView myWebView = (WebView) findViewById(R.id.webview);
@@ -77,6 +92,7 @@ public class NetworkActivity extends Activity {
             //ListView podLijst = (ListView) findViewById(R.id.podLijst);
             //ArrayAdapter adapter = new ArrayAdapter<PodXmlParser.Entry>(this, R.layout.activity_network, entries);
             //podLijst.setAdapter(adapter);
+
         }
     }
     // Uploads XML from stackoverflow.com, parses it, and combines it with
@@ -128,6 +144,14 @@ public class NetworkActivity extends Activity {
                 htmlString.append(entry.summary);
             }
         }
+        /*
+        epNames = new String[entries.size()];
+        epLinks = new String[entries.size()];
+        for(int i = 0; i < entries.size(); i++){
+            epNames[i] = entries.get(i).title;
+            epLinks[i] = entries.get(i).link;
+        }*/
+
         htmlString.append("<h3>" + entries.isEmpty() + "</h3>");
         return htmlString.toString();
     }

@@ -18,6 +18,9 @@ public interface PodcastDao {
     @Query("SELECT * FROM podcast WHERE title LIKE :first LIMIT 1")
     Podcast findByName(String first);
 
+    @Query("SELECT * FROM podcast WHERE id = :userId")
+    Podcast get(int userId);
+
     @Insert
     void insertAll(Podcast... users);
 
