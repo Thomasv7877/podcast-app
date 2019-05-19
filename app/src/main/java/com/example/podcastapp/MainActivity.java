@@ -1,11 +1,18 @@
 package com.example.podcastapp;
 
+import android.Manifest;
 import android.content.Intent;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -16,10 +23,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.room.Room;
@@ -33,11 +43,14 @@ public class MainActivity extends AppCompatActivity {
     AppDatabase db;
     RecyclerView.LayoutManager layoutManger;
     ImageAdapter adapter;
+    private static int REQUEST_CODE=1;
     // url pod: https://rss.art19.com/hollywood-handbook
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // bij sdk versies > 23 moet bovenop de manifest permissie voor write external storage ook manieel goedkeuring gegeven worden
+        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CODE);
         setContentView(R.layout.activity_main);
 
         podList = new ArrayList<>();
@@ -73,6 +86,7 @@ public class MainActivity extends AppCompatActivity {
 
         fillGridWithImages();
     }
+
 
     public void readFeed(View view){
         Intent feedIntent = new Intent(this, NetworkActivity.class);
@@ -132,4 +146,17 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public void testAfsplenKlik(View view) {
+        File file=new File(Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_PODCASTS),"287_Andy_Daly_Our_Cookbook_Friend.mp3");
+        Toast.makeText(this, file.toString() + " aan het afspelen.." , Toast.LENGTH_SHORT).show();
+        Intent epPlayer = new Intent(this, EpisodePlayer.class);
+        startActivity(epPlayer);
+    }
+
+    public void testDownloadsOverzichtKlik(View view) {
+        Toast.makeText(this, "testDownloadsOverzichtKlik geklikt!", Toast.LENGTH_SHORT).show();
+        Intent dwnOverzicht = new Intent(this, DownloadsActivity.class);
+        startActivity(dwnOverzicht);
+    }
 }

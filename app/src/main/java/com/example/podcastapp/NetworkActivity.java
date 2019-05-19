@@ -1,18 +1,31 @@
 package com.example.podcastapp;
 
+import android.Manifest;
 import android.app.Activity;
+import android.app.DownloadManager;
+import android.app.NotificationManager;
+import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.preference.PreferenceManager;
+import android.view.View;
 import android.webkit.WebView;
+import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import org.xmlpull.v1.XmlPullParserException;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -23,7 +36,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-public class NetworkActivity extends Activity {
+public class NetworkActivity extends AppCompatActivity implements EpisodeAdapter.ItemClickListener {
 
     //private List<PodXmlParser.Entry> entries = null;
     public static final String WIFI = "Wi-Fi";
@@ -46,12 +59,16 @@ public class NetworkActivity extends Activity {
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager layoutManager;
     private String[] epLinks, epNames;*/
+    private List<String> epNames, epLinks;
+    EpisodeAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         String temp = this.getIntent().getStringExtra("feed");
         if (temp != null) URL = temp;
+        epNames = new ArrayList<>();
+        epLinks = new ArrayList<>();
         //setContentView(R.layout.activity_network);
         loadPage();
 
@@ -69,6 +86,32 @@ public class NetworkActivity extends Activity {
             // show error
         }
     }
+
+    @Override
+    public void onItemClick(View view, int position) {
+        String epNaam = adapter.getItem(position);
+        String epLink = epLinks.get(position);
+        Toast.makeText(this, "Downloading " + epNaam + " on row number " + position, Toast.LENGTH_SHORT).show();
+        //new DownloadEpisodeTask().execute(link);
+
+
+
+        long downloadID;
+        epNaam = epNaam.replaceAll("\\.|\\,", "").replaceAll(" ", "_");
+        File file=new File(Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_PODCASTS),epNaam + ".mp3");
+
+        DownloadManager.Request request=new DownloadManager.Request(Uri.parse(epLink))
+                .setTitle(epNaam)// Title of the Download Notification
+                .setDescription("Downloading")// Description of the Download Notification
+                .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE)// Visibility of the download Notification
+                .setDestinationUri(Uri.fromFile(file));// Uri of the destination file
+
+        DownloadManager downloadManager= (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
+        downloadID = downloadManager.enqueue(request);
+    }
+
+
     // Implementation of AsyncTask used to download XML feed from stackoverflow.com.
     private class DownloadXmlTask extends AsyncTask<String, Void, String> {
         @Override
@@ -87,14 +130,23 @@ public class NetworkActivity extends Activity {
             //setupRecyclerView();
             setContentView(R.layout.activity_network);
             // Displays the HTML string in the UI via a WebView
-            WebView myWebView = (WebView) findViewById(R.id.webview);
-            myWebView.loadData(result, "text/html", null);
+            //WebView myWebView = (WebView) findViewById(R.id.webview);
+            //myWebView.loadData(result, "text/html", null);
             //ListView podLijst = (ListView) findViewById(R.id.podLijst);
             //ArrayAdapter adapter = new ArrayAdapter<PodXmlParser.Entry>(this, R.layout.activity_network, entries);
             //podLijst.setAdapter(adapter);
-
+            setupRecyclerView();
         }
     }
+
+    private void setupRecyclerView() {
+        RecyclerView recyclerView = findViewById(R.id.recyclerView);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        adapter = new EpisodeAdapter(this, epNames);
+        adapter.setClickListener(this);
+        recyclerView.setAdapter(adapter);
+    }
+
     // Uploads XML from stackoverflow.com, parses it, and combines it with
 // HTML markup. Returns HTML string.
     private String loadXmlFromNetwork(String urlString) throws XmlPullParserException, IOException {
@@ -143,6 +195,8 @@ public class NetworkActivity extends Activity {
             if (pref) {
                 htmlString.append(entry.summary);
             }
+            epNames.add(entry.title);
+            epLinks.add(entry.link);
         }
         /*
         epNames = new String[entries.size()];
@@ -152,7 +206,7 @@ public class NetworkActivity extends Activity {
             epLinks[i] = entries.get(i).link;
         }*/
 
-        htmlString.append("<h3>" + entries.isEmpty() + "</h3>");
+        //htmlString.append("<h3>" + entries.isEmpty() + "</h3>");
         return htmlString.toString();
     }
 

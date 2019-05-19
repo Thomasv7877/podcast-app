@@ -1,9 +1,14 @@
 <resources>
-    <string name="app_name">Podcast App</string>
+    <string name="app_name2">Podcast App</string>
     <string name="page_title" />
     <string name="updated" />
     <string name="connection_error">connection_error</string>
     <string name="xml_error">xml_error</string>
     <string name="read_rss_feed">Read RSS Feed</string>
     <string name="htmltekst">TextView</string>
+    <string name="app_name">My Application</string>
+    <string name="back"><![CDATA[<]]></string>
+    <string name="rewind"><![CDATA[<<]]></string>
+    <string name="forward"><![CDATA[>>]]></string>
+    <string name="pause">||</string>
 </resources>
