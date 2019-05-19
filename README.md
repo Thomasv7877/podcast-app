@@ -6,14 +6,14 @@ Een simpele podcast app waarmee het mogelijk te abboneren op een podcast adhv de
 
 # Functionaliteit:
 ## Podcast toevoegen adhv url
-![home](/img/home.jpg)
+![home](/img/home.JPG)
 ## Eeschikbare afleveringen tonen
-![afleveringen lijst](/img/epLijst.jpg)
+![afleveringen lijst](/img/epLijst.JPG)
 ## Een aflevering downloaden
-![gedownloade afleveringen](/img/downloads.jpg)
-![download vooruitgang](/img/dwnProgress.jpg)
+![gedownloade afleveringen](/img/downloads.JPG)
+![download vooruitgang](/img/dwnProgress.JPG)
 ## Een gedownloade aflevering afspelen
-![afleveringen afspelen](/img/afspelen.jpg)
+![afleveringen afspelen](/img/afspelen.JPG)
 
 
 
