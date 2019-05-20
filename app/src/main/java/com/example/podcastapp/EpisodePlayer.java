@@ -2,6 +2,9 @@ package com.example.podcastapp;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -21,6 +24,7 @@ import android.widget.Toast;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.util.concurrent.TimeUnit;
 
 
@@ -57,11 +61,11 @@ public class EpisodePlayer extends Activity {
         tx1 = (TextView)findViewById(R.id.textView2);
         tx2 = (TextView)findViewById(R.id.textView3);
         tx3 = (TextView)findViewById(R.id.textView4);
-        tx3.setText(epFileName);
+        tx3.setText("Episode");
 
         //mediaPlayer = MediaPlayer.create(this, R.raw.song);
-        File file=new File(Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_PODCASTS),epFileName);
+        File file=new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PODCASTS),epFileName);
+        setPlayerInfo(file);
         Log.i("DIR", file.toString());
         try {
             mediaPlayer = new MediaPlayer();
@@ -165,4 +169,20 @@ public class EpisodePlayer extends Activity {
             myHandler.postDelayed(this, 100);
         }
     };
+
+    private void setPlayerInfo(File file){
+        TextView txtSub = (TextView) findViewById(R.id.textView);
+        txtSub.setText(epFileName);
+        ImageView playAfbeelding = (ImageView) findViewById(R.id.imageView);
+        MediaMetadataRetriever mmr = new MediaMetadataRetriever();
+
+        mmr.setDataSource(file.toString());
+        byte[] artBytes =  mmr.getEmbeddedPicture();
+        if(artBytes!=null)
+        {
+            //     InputStream is = new ByteArrayInputStream(mmr.getEmbeddedPicture());
+            Bitmap bm = BitmapFactory.decodeByteArray(artBytes, 0, artBytes.length);
+            playAfbeelding.setImageBitmap(bm);
+        }
+    }
 }

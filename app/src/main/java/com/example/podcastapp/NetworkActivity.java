@@ -14,6 +14,7 @@ import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.view.View;
 import android.webkit.WebView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -65,6 +66,7 @@ public class NetworkActivity extends AppCompatActivity implements EpisodeAdapter
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         String temp = this.getIntent().getStringExtra("feed");
         if (temp != null) URL = temp;
         epNames = new ArrayList<>();
@@ -136,6 +138,7 @@ public class NetworkActivity extends AppCompatActivity implements EpisodeAdapter
             //ArrayAdapter adapter = new ArrayAdapter<PodXmlParser.Entry>(this, R.layout.activity_network, entries);
             //podLijst.setAdapter(adapter);
             setupRecyclerView();
+            setTitleAndDescription();
         }
     }
 
@@ -223,5 +226,13 @@ public class NetworkActivity extends AppCompatActivity implements EpisodeAdapter
         conn.connect();
         return conn.getInputStream();
     }
-
+    private void setTitleAndDescription(){
+        String title = this.getIntent().getStringExtra("title");
+        TextView txtTitle = (TextView) findViewById(R.id.podOmschrijving);
+        txtTitle.setText(title);
+        String description = this.getIntent().getStringExtra("description");
+        description = description.replaceAll("<p>|</p>", "");
+        TextView txtDescription = (TextView) findViewById(R.id.podNaam);
+        txtDescription.setText(description);
+    }
 }

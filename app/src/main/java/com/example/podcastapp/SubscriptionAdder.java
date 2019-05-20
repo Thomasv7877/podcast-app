@@ -30,16 +30,26 @@ public class SubscriptionAdder {
     private String title;
     private String description;
     private String imgUrl;
-    private MainActivity main;
+    private MainActivityNew main;
+    //private MainActivityNew mainNew;
 
-    public SubscriptionAdder(MainActivity mainActivity) {
+    public SubscriptionAdder(MainActivityNew mainActivityNew) {
 
-        this.main = mainActivity;
+        this.main = mainActivityNew;
         this.feedUrl = null;
         this.title = null;
         this.description = null;
         this.imgUrl = null;
     }
+
+    // oude constructor
+    /*public SubscriptionAdder(MainActivity main) {
+        this.main = main;
+        this.feedUrl = null;
+        this.title = null;
+        this.description = null;
+        this.imgUrl = null;
+    }*/
 
     public void addSub(String URL){
         this.feedUrl = URL;

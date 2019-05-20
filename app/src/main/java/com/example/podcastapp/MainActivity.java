@@ -106,8 +106,8 @@ public class MainActivity extends AppCompatActivity {
     }
     public void AddSubClicked(View view){
         EditText feedEditText = (EditText) findViewById(R.id.txtFeed);
-        SubscriptionAdder adder = new SubscriptionAdder(this);
-        adder.addSub(feedEditText.getText().toString());
+        //SubscriptionAdder adder = new SubscriptionAdder(this);
+        //adder.addSub(feedEditText.getText().toString());
     }
     private void updateGrid(){
 

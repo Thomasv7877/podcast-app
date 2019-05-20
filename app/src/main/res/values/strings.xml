@@ -6,9 +6,24 @@
     <string name="xml_error">xml_error</string>
     <string name="read_rss_feed">Read RSS Feed</string>
     <string name="htmltekst">TextView</string>
-    <string name="app_name">My Application</string>
+    <string name="app_name">Podcast App</string>
     <string name="back"><![CDATA[<]]></string>
     <string name="rewind"><![CDATA[<<]]></string>
     <string name="forward"><![CDATA[>>]]></string>
     <string name="pause">||</string>
+    <string name="title_activity_main_new">Podcast App</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Podcast App</string>
+    <string name="nav_header_subtitle">Gemaakt door Thomasv7877</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="menu_home">Home</string>
+    <string name="menu_gallery">Downloads</string>
+    <string name="menu_slideshow">Slideshow</string>
+    <string name="menu_tools">Tools</string>
+    <string name="menu_share">About</string>
+    <string name="menu_send">Send</string>
+    <string name="titleDrawerSubSection">Extra</string>
 </resources>
