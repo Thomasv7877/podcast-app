@@ -48,15 +48,10 @@ public class MainActivityNew extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     ArrayList<Bitmap> podList;
-    ArrayAdapter<Bitmap> adapterOld;
-    //RecyclerView.Adapter rAdapter;
     GridView podGrid;
     AppDatabase db;
-    RecyclerView.LayoutManager layoutManger;
     ImageAdapter adapter;
     private static int REQUEST_CODE=1;
-    // url pod: https://rss.art19.com/hollywood-handbook
-    // url pod2: https://rss.art19.com/comedy-bang-bang
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -130,10 +125,9 @@ public class MainActivityNew extends AppCompatActivity
         if (id == R.id.action_settings) {
             return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
-
+    // afhandelen van acties in het "drawer" menu
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
@@ -143,11 +137,12 @@ public class MainActivityNew extends AppCompatActivity
         if (id == R.id.nav_home) {
             // Handle the camera action
         } else if (id == R.id.nav_gallery) {
+            // naar de activity voor het downloadoverzicht gaan
             Toast.makeText(this, "navigeren naar downloads!", Toast.LENGTH_SHORT).show();
             Intent dwnOverzicht = new Intent(this, DownloadsActivity.class);
             startActivity(dwnOverzicht);
         }else if (id == R.id.nav_share) {
-
+            // TODO: about pagina
         }
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
@@ -161,7 +156,7 @@ public class MainActivityNew extends AppCompatActivity
         feedIntent.putExtra("title", title);
         feedIntent.putExtra("description", description);
         Log.i("TITEL: ", title);
-        Log.i("DESRIPTION: ", description);
+        Log.i("DESCRIPTION: ", description);
         startActivity(feedIntent);
     }
 
@@ -170,18 +165,16 @@ public class MainActivityNew extends AppCompatActivity
                 AppDatabase.class, "database-name").allowMainThreadQueries().build();
         return db;
     }
-    public void AddSubClicked(View view){
-        EditText feedEditText = (EditText) findViewById(R.id.txtFeed);
-        SubscriptionAdder adder = new SubscriptionAdder(this);
-        adder.addSub(feedEditText.getText().toString());
-    }
+
     public void updateViewWithPodcast(Podcast pod) {
         //adapter.add(pod.getTitle());
         db.podcastDao().insertAll(pod);
     }
+
     public void setImage(Bitmap bitmap){
         adapter.add(bitmap);
     }
+    // De afbeeldingen ophalen die zicht in de interne app storage bevinden om het home scherm te populeren
     public void fillGridWithImages(){
         List<Podcast> lijst = db.podcastDao().getAll();
         String name;
@@ -199,20 +192,14 @@ public class MainActivityNew extends AppCompatActivity
             e.printStackTrace();
         }
     }
-
-    public void testDownloadsOverzichtKlik(View view) {
-        Toast.makeText(this, "testDownloadsOverzichtKlik geklikt!", Toast.LENGTH_SHORT).show();
-        Intent dwnOverzicht = new Intent(this, DownloadsActivity.class);
-        startActivity(dwnOverzicht);
-    }
-
+    // maakt en toont de dialog om een podcast toe te voegen adhv de url
     private void showFeedDialog() {
-
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Enter feed").setView(R.layout.activity_feed_dialog)
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                // FIRE ZE MISSILES!
+                // Klasse SubscriptionAdder de xml laten parsen van de url om podcast effectief toe te voegen
+                // OPMERKING: we hebben de view nodig uit de dialog, niet uit de parent, hiervoor 2 volgende lijnen
                 Dialog actualDialog = (Dialog) dialog;
                 EditText feedEditText = (EditText) actualDialog.findViewById(R.id.enterFeed);
                 SubscriptionAdder adder = new SubscriptionAdder(MainActivityNew.this);

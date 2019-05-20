@@ -33,28 +33,15 @@ public class SubscriptionAdder {
     private MainActivityNew main;
     //private MainActivityNew mainNew;
 
+    // OPMERKING: indien terug MainActivity nodig "MainActivityNew" vervangen door "MainActivity"
+    // + elders vervangen indien zichtbare fouten
     public SubscriptionAdder(MainActivityNew mainActivityNew) {
-
         this.main = mainActivityNew;
-        this.feedUrl = null;
-        this.title = null;
-        this.description = null;
-        this.imgUrl = null;
     }
-
-    // oude constructor
-    /*public SubscriptionAdder(MainActivity main) {
-        this.main = main;
-        this.feedUrl = null;
-        this.title = null;
-        this.description = null;
-        this.imgUrl = null;
-    }*/
 
     public void addSub(String URL){
         this.feedUrl = URL;
         new addSubIBackground().execute(URL);
-
     }
 
     private class addSubIBackground extends AsyncTask<String, Void, String> {
@@ -74,21 +61,12 @@ public class SubscriptionAdder {
 
         @Override
         protected void onPostExecute(String result) {
-            //setContentView(R.layout.activity_network);
-            // Displays the HTML string in the UI via a WebView
-            //WebView myWebView = (WebView) findViewById(R.id.webview);
-            //myWebView.loadData(result, "text/html", null);
-            //ListView podLijst = (ListView) findViewById(R.id.podLijst);
-            //ArrayAdapter adapter = new ArrayAdapter<PodXmlParser.Entry>(this, R.layout.activity_network, entries);
-            //podLijst.setAdapter(adapter);
             System.out.println(title + "\n" + description + "\n" + feedUrl + "\n" + imgUrl);
-            //System.out.print(this.toString());
             main.updateViewWithPodcast(new Podcast(title, description, feedUrl));
             //updateDbAndStorage();
             showImage();
         }
     }
-
 
     public void parseXml(String urlString)throws XmlPullParserException, IOException {
         InputStream stream = null;
@@ -96,14 +74,13 @@ public class SubscriptionAdder {
             stream = downloadUrl(urlString);
             XmlPullParser parser = setupParser(stream);
             readFeed2(parser);
-            // Makes sure that the InputStream is closed after the app is
-            // finished using it.
         } finally {
             if (stream != null) {
                 stream.close();
             }
         }
     }
+
     public XmlPullParser setupParser(InputStream in) throws XmlPullParserException, IOException {
         try {
             XmlPullParser parser = Xml.newPullParser();
@@ -116,41 +93,13 @@ public class SubscriptionAdder {
         }
     }
 
-    public void readFeed(XmlPullParser parser) throws XmlPullParserException, IOException {
-        List entries = new ArrayList();
-        parser.nextTag();
-        parser.require(XmlPullParser.START_TAG, null, "channel");
-
-        // oldwilecheck: parser.next() != XmlPullParser.END_TAG
-        while (parser.next() != XmlPullParser.END_TAG) {
-            if (parser.getEventType() != XmlPullParser.START_TAG) {
-                continue;
-            }
-            String name = parser.getName();
-            System.out.println(name);
-            // Starts by looking for the entry tag
-            if (name.equals("title")) {
-                this.title = readTitle(parser);
-            } else if (name.equals("description")) {
-                this.description = readSummary(parser);
-            } else if (name.equals("itunes:image")) {
-                //System.out.println("image gevonden!!");
-                //parser.nextTag();
-                this.imgUrl = readUrl(parser);
-            }else {
-                skip(parser);
-            }
-
-        }
-    }
-
     public void readFeed2(XmlPullParser parser) throws XmlPullParserException, IOException {
         List entries = new ArrayList();
         //parser.nextTag();
         boolean itemTag = false;
         int eventType = parser.getEventType();
 
-        // oldwilecheck: parser.next() != XmlPullParser.END_TAG
+        // old whilecheck: parser.next() != XmlPullParser.END_TAG
         while (!itemTag) {
             String tagname = parser.getName();
             if (eventType == XmlPullParser.START_TAG){
@@ -220,7 +169,6 @@ public class SubscriptionAdder {
         parser.require(XmlPullParser.END_TAG, ns, "title");
         return title;
     }
-
 
     private String readUrl(XmlPullParser parser) throws IOException, XmlPullParserException {
         parser.require(XmlPullParser.START_TAG, ns, "itunes:image");
